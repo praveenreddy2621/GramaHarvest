@@ -33,7 +33,7 @@ export default function WaitlistPage() {
     }, [token]);
 
     return (
-        <div className="max-w-6xl mx-auto p-8">
+        <div className="max-w-6xl mx-auto p-4 md:p-8">
             <div className="mb-6">
                 <Link href="/admin" className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors mb-4">
                     <ArrowLeft size={16} />

@@ -16,9 +16,26 @@ export default function CartPage() {
     const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
     const [couponError, setCouponError] = useState('');
     const [loadingCoupon, setLoadingCoupon] = useState(false);
+    const [publicCoupons, setPublicCoupons] = useState<any[]>([]);
 
-    const handleApplyCoupon = async () => {
-        if (!couponCode.trim()) {
+    React.useEffect(() => {
+        const fetchCoupons = async () => {
+            try {
+                const res = await fetch(`${BACKEND_API}/api/coupons/public`);
+                const data = await res.json();
+                if (res.ok) {
+                    setPublicCoupons(data);
+                }
+            } catch (err) {
+                console.error('Error fetching coupons:', err);
+            }
+        };
+        fetchCoupons();
+    }, []);
+
+    const handleApplyCoupon = async (codeToApply?: string) => {
+        const code = codeToApply || couponCode;
+        if (!code.trim()) {
             setCouponError('Please enter a coupon code');
             return;
         }
@@ -34,7 +51,7 @@ export default function CartPage() {
                     Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    code: couponCode,
+                    code: code,
                     orderAmount: cartTotal
                 })
             });
@@ -43,6 +60,7 @@ export default function CartPage() {
 
             if (res.ok && data.valid) {
                 setAppliedCoupon(data.coupon);
+                setCouponCode(code);
                 setCouponError('');
             } else {
                 setCouponError(data.message || 'Invalid coupon code');
@@ -156,7 +174,7 @@ export default function CartPage() {
                                     </div>
 
                                     {!appliedCoupon ? (
-                                        <div className="space-y-2">
+                                        <div className="space-y-4">
                                             <div className="flex gap-2">
                                                 <input
                                                     type="text"
@@ -166,7 +184,7 @@ export default function CartPage() {
                                                     className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none uppercase"
                                                 />
                                                 <button
-                                                    onClick={handleApplyCoupon}
+                                                    onClick={() => handleApplyCoupon()}
                                                     disabled={loadingCoupon}
                                                     className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50"
                                                 >
@@ -175,6 +193,25 @@ export default function CartPage() {
                                             </div>
                                             {couponError && (
                                                 <p className="text-sm text-red-600">{couponError}</p>
+                                            )}
+
+                                            {/* Available Coupons List */}
+                                            {publicCoupons.length > 0 && (
+                                                <div className="space-y-2 mt-4">
+                                                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Available Offers</p>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {publicCoupons.map((coupon) => (
+                                                            <button
+                                                                key={coupon.id}
+                                                                onClick={() => handleApplyCoupon(coupon.code)}
+                                                                className="group flex flex-col items-start p-2 border border-dashed border-green-300 rounded-lg bg-green-50/50 hover:bg-green-100 transition-all text-left"
+                                                            >
+                                                                <span className="text-sm font-bold text-green-700 uppercase">{coupon.code}</span>
+                                                                <span className="text-[10px] text-gray-600 line-clamp-1">{coupon.description}</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             )}
                                         </div>
                                     ) : (

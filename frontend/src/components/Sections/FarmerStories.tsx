@@ -44,14 +44,14 @@ export default function FarmerStories() {
     const prev = () => setIndex((prev) => (prev - 1 + stories.length) % stories.length);
 
     return (
-        <section className="py-24 bg-nature-earth text-nature-cream relative overflow-hidden">
+        <section className="py-12 md:py-24 bg-nature-earth text-nature-cream relative overflow-hidden">
             {/* Parallax Background hint */}
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]"></div>
 
             <div className="container mx-auto px-4 relative z-10">
-                <div className="text-center mb-16">
-                    <span className="text-nature-gold font-bold uppercase tracking-widest text-sm mb-2 block">Our Roots</span>
-                    <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">Stories from the Soil</h2>
+                <div className="text-center mb-8 md:mb-16">
+                    <span className="text-nature-gold font-bold uppercase tracking-widest text-xs md:text-sm mb-2 block">Our Roots</span>
+                    <h2 className="text-2xl md:text-5xl font-serif font-bold mb-4">Stories from the Soil</h2>
                 </div>
 
                 <motion.div
@@ -71,9 +71,9 @@ export default function FarmerStories() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -50 }}
                                 transition={{ duration: 0.5 }}
-                                className="bg-nature-cream text-nature-earth rounded-[3rem] p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center gap-12"
+                                className="bg-nature-cream text-nature-earth rounded-3xl md:rounded-[3rem] p-6 md:p-12 shadow-2xl flex flex-col md:flex-row items-center gap-6 md:gap-12"
                             >
-                                <div className="w-full md:w-1/2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative shadow-inner">
+                                <div className="w-full md:w-1/2 h-[220px] md:h-[400px] rounded-2xl overflow-hidden relative shadow-inner">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
                                         src={stories[index].image}
@@ -82,25 +82,25 @@ export default function FarmerStories() {
                                     />
                                 </div>
 
-                                <div className="w-full md:w-1/2 space-y-6">
-                                    <div className="text-6xl text-nature-gold font-serif opacity-30">"</div>
-                                    <h3 className="text-2xl md:text-4xl font-serif font-medium leading-relaxed italic">
+                                <div className="w-full md:w-1/2 space-y-4 md:space-y-6 text-center md:text-left">
+                                    <div className="text-4xl md:text-6xl text-nature-gold font-serif opacity-30 leading-none">"</div>
+                                    <h3 className="text-lg md:text-4xl font-serif font-medium leading-relaxed italic px-2">
                                         {stories[index].quote}
                                     </h3>
-                                    <div className="pt-6 border-t border-nature-earth/10">
-                                        <h4 className="text-xl font-bold">{stories[index].name}</h4>
-                                        <p className="text-nature-green font-bold text-sm uppercase tracking-wide">{stories[index].role} — {stories[index].location}</p>
+                                    <div className="pt-4 md:pt-6 border-t border-nature-earth/10">
+                                        <h4 className="text-lg md:text-xl font-bold">{stories[index].name}</h4>
+                                        <p className="text-nature-green font-bold text-[10px] md:text-sm uppercase tracking-wide">{stories[index].role} — {stories[index].location}</p>
                                     </div>
                                 </div>
                             </motion.div>
                         </AnimatePresence>
 
                         {/* Controls */}
-                        <div className="flex justify-center gap-4 mt-8">
-                            <button onClick={prev} className="p-4 rounded-full border border-nature-cream/20 hover:bg-nature-gold hover:text-nature-earth transition-colors">
+                        <div className="flex justify-center gap-3 mt-6">
+                            <button onClick={prev} className="p-3 md:p-4 rounded-full border border-nature-cream/20 hover:bg-nature-gold hover:text-nature-earth transition-colors">
                                 <ChevronLeft size={24} />
                             </button>
-                            <button onClick={next} className="p-4 rounded-full border border-nature-cream/20 hover:bg-nature-gold hover:text-nature-earth transition-colors">
+                            <button onClick={next} className="p-3 md:p-4 rounded-full border border-nature-cream/20 hover:bg-nature-gold hover:text-nature-earth transition-colors">
                                 <ChevronRight size={24} />
                             </button>
                         </div>

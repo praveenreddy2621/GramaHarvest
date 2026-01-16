@@ -3,17 +3,44 @@ import React, { useState } from 'react';
 import Navbar from '@/components/UI/Navbar';
 import Footer from '@/components/UI/Footer';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { BACKEND_API } from '@/config';
 
 export default function ContactPage() {
-    const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+    const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('submitting');
-        // Simulate API call
-        setTimeout(() => {
-            setStatus('success');
-        }, 1500);
+        setErrorMessage('');
+
+        const form = e.currentTarget as HTMLFormElement;
+        const data = {
+            name: (form.elements.namedItem('name') as HTMLInputElement).value,
+            email: (form.elements.namedItem('email') as HTMLInputElement).value,
+            subject: (form.elements.namedItem('subject') as HTMLInputElement).value,
+            message: (form.elements.namedItem('message') as HTMLTextAreaElement).value
+        };
+
+        try {
+            const res = await fetch(`${BACKEND_API}/api/contact`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                setStatus('success');
+            } else {
+                const errorData = await res.json();
+                setStatus('error');
+                setErrorMessage(errorData.message || 'Failed to send message');
+            }
+        } catch (err) {
+            console.error('Contact error:', err);
+            setStatus('error');
+            setErrorMessage('Could not connect to server');
+        }
     };
 
     return (
@@ -104,12 +131,19 @@ export default function ContactPage() {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <h2 className="text-2xl font-serif font-bold text-nature-earth mb-6">Send us a Message</h2>
 
+                                {status === 'error' && (
+                                    <div className="bg-red-50 text-red-700 p-4 rounded-xl text-center mb-6">
+                                        {errorMessage}
+                                    </div>
+                                )}
+
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label htmlFor="name" className="text-sm font-bold text-nature-earth/80 ml-1">Your Name</label>
                                         <input
                                             type="text"
                                             id="name"
+                                            name="name"
                                             required
                                             className="w-full px-4 py-3 rounded-xl bg-nature-cream/30 border border-nature-earth/10 focus:border-nature-green focus:bg-white focus:outline-none transition-all"
                                             placeholder="John Doe"
@@ -120,6 +154,7 @@ export default function ContactPage() {
                                         <input
                                             type="email"
                                             id="email"
+                                            name="email"
                                             required
                                             className="w-full px-4 py-3 rounded-xl bg-nature-cream/30 border border-nature-earth/10 focus:border-nature-green focus:bg-white focus:outline-none transition-all"
                                             placeholder="john@example.com"
@@ -132,6 +167,7 @@ export default function ContactPage() {
                                     <input
                                         type="text"
                                         id="subject"
+                                        name="subject"
                                         required
                                         className="w-full px-4 py-3 rounded-xl bg-nature-cream/30 border border-nature-earth/10 focus:border-nature-green focus:bg-white focus:outline-none transition-all"
                                         placeholder="Order Inquiry / General Question"
@@ -142,6 +178,7 @@ export default function ContactPage() {
                                     <label htmlFor="message" className="text-sm font-bold text-nature-earth/80 ml-1">Message</label>
                                     <textarea
                                         id="message"
+                                        name="message"
                                         required
                                         rows={5}
                                         className="w-full px-4 py-3 rounded-xl bg-nature-cream/30 border border-nature-earth/10 focus:border-nature-green focus:bg-white focus:outline-none transition-all resize-none"

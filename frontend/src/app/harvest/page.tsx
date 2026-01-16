@@ -13,6 +13,7 @@ function HarvestContent() {
     const { addToCart } = useCart();
     const searchParams = useSearchParams();
     const [products, setProducts] = useState<any[]>([]);
+    const [categories, setCategories] = useState<string[]>(['All']);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -23,6 +24,7 @@ function HarvestContent() {
 
     useEffect(() => {
         fetchProducts();
+        fetchCategories();
     }, []);
 
     const fetchProducts = async () => {
@@ -39,9 +41,19 @@ function HarvestContent() {
         }
     };
 
-    const baseCategories = ['All', 'Dairy', 'Grains', 'Spices', 'Pickles', 'Oils'];
-    const dynamicCategories = Array.from(new Set(products.map(p => p.category)));
-    const categories = Array.from(new Set([...baseCategories, ...dynamicCategories]));
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch(`${BACKEND_API}/api/categories`);
+            if (res.ok) {
+                const data = await res.json();
+                const categoryNames = data.map((cat: any) => cat.name);
+                setCategories(['All', ...categoryNames]);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const filteredProducts = selectedCategory === 'All'
         ? products
         : products.filter(p => p.category === selectedCategory);

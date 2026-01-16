@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 // Dynamic 3D imports
 const GheeScene = dynamic(() => import('../Canvas/GheeScene'), { ssr: false });
@@ -78,9 +79,9 @@ export default function Showcase3D() {
                                 </li>
                             ))}
                         </ul>
-                        <button className="mt-8 px-8 py-4 bg-nature-earth text-white rounded-full font-bold hover:bg-nature-green transition-colors flex items-center gap-2">
+                        <Link href="/harvest?category=Dairy" className="mt-8 px-8 py-4 bg-nature-earth text-white rounded-full font-bold hover:bg-nature-green transition-colors flex items-center gap-2 w-fit">
                             Shop Ghee <ArrowRight size={18} />
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
@@ -103,9 +104,9 @@ export default function Showcase3D() {
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src="/images/rice-bag.png" alt="Rice Bag" className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
                         </div>
-                        <button className="w-full py-4 border-2 border-nature-green text-nature-green rounded-xl font-bold hover:bg-nature-green hover:text-white transition-colors">
+                        <Link href="/harvest?category=Grains" className="block w-full text-center py-4 border-2 border-nature-green text-nature-green rounded-xl font-bold hover:bg-nature-green hover:text-white transition-colors">
                             View Details
-                        </button>
+                        </Link>
                     </div>
 
                     {/* CHILLIES CARD - With Slide Animation */}
@@ -132,9 +133,9 @@ export default function Showcase3D() {
                                 </p>
                             </div>
 
-                            <button className="w-full py-4 border-2 border-nature-red text-nature-red rounded-xl font-bold hover:bg-nature-red hover:text-white transition-colors shadow-sm">
+                            <Link href="/harvest?category=Spices" className="block w-full text-center py-4 border-2 border-nature-red text-nature-red rounded-xl font-bold hover:bg-nature-red hover:text-white transition-colors shadow-sm">
                                 Browse Spices
-                            </button>
+                            </Link>
                         </div>
                     </div>
 

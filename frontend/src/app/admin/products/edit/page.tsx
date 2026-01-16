@@ -17,21 +17,35 @@ export default function EditProductPage() {
     const [uploading, setUploading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [imagePreview, setImagePreview] = useState('');
+    const [categories, setCategories] = useState([]);
     const [form, setForm] = useState({
         name: '',
         description: '',
         price: '',
         category: '',
         imageUrl: '',
+        galleryUrls: [] as string[],
+        sizes: [] as { size: string, price: number }[],
         stock: '',
         isPreorder: false
     });
 
     useEffect(() => {
+        fetchCategories();
         if (productId) {
             fetchProduct();
         }
     }, [productId]);
+
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch(`${BACKEND_API}/api/categories`);
+            const data = await res.json();
+            setCategories(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const fetchProduct = async () => {
         try {
@@ -44,6 +58,8 @@ export default function EditProductPage() {
                     price: data.price.toString(),
                     category: data.category,
                     imageUrl: data.image_url || '',
+                    galleryUrls: data.gallery_urls || [],
+                    sizes: data.sizes || [],
                     stock: data.stock.toString(),
                     isPreorder: data.is_preorder || false
                 });
@@ -102,6 +118,61 @@ export default function EditProductPage() {
         } finally {
             setUploading(false);
         }
+    };
+
+    const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        setUploading(true);
+        const formData = new FormData();
+        Array.from(files).forEach(file => {
+            formData.append('images', file);
+        });
+
+        try {
+            const res = await fetch(`${BACKEND_API}/api/products/upload-multiple`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setForm({ ...form, galleryUrls: [...form.galleryUrls, ...data.imageUrls] });
+            } else {
+                alert('Failed to upload images');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error uploading images');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const addSize = () => {
+        setForm({ ...form, sizes: [...form.sizes, { size: '', price: 0 }] });
+    };
+
+    const updateSize = (index: number, field: 'size' | 'price', value: string | number) => {
+        const newSizes = [...form.sizes];
+        newSizes[index] = { ...newSizes[index], [field]: value };
+        setForm({ ...form, sizes: newSizes });
+    };
+
+    const removeSize = (index: number) => {
+        const newSizes = [...form.sizes];
+        newSizes.splice(index, 1);
+        setForm({ ...form, sizes: newSizes });
+    };
+
+    const removeGalleryImage = (index: number) => {
+        const newGallery = [...form.galleryUrls];
+        newGallery.splice(index, 1);
+        setForm({ ...form, galleryUrls: newGallery });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -191,6 +262,39 @@ export default function EditProductPage() {
                     )}
                 </div>
 
+                {/* Gallery Upload */}
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Product Gallery (Additional Pictures)</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        {form.galleryUrls.map((url, index) => (
+                            <div key={index} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                                <Image src={`${BACKEND_API}${url}`} alt={`Gallery ${index}`} fill className="object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={() => removeGalleryImage(index)}
+                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                                >
+                                    <X size={12} />
+                                </button>
+                            </div>
+                        ))}
+                        {form.galleryUrls.length < 5 && (
+                            <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-nature-green transition-colors bg-gray-50">
+                                <Upload className="w-6 h-6 mb-1 text-gray-400" />
+                                <span className="text-[10px] text-gray-500 font-semibold">Add More</span>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleGalleryUpload}
+                                    disabled={uploading}
+                                />
+                            </label>
+                        )}
+                    </div>
+                </div>
+
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Product Name</label>
                     <input
@@ -215,6 +319,45 @@ export default function EditProductPage() {
                         className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-nature-green outline-none"
                         placeholder="Product details..."
                     />
+                </div>
+
+                <div>
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-bold text-gray-700">Product Sizes (Optional)</label>
+                        <button type="button" onClick={addSize} className="text-sm font-bold text-nature-green hover:text-nature-earth transition-colors">
+                            + Add Size
+                        </button>
+                    </div>
+
+                    {form.sizes.length > 0 && (
+                        <div className="space-y-3 mb-4">
+                            {form.sizes.map((s, index) => (
+                                <div key={index} className="flex gap-4 items-end bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <div className="flex-1">
+                                        <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Label (e.g. 500ml)</label>
+                                        <input
+                                            type="text"
+                                            value={s.size}
+                                            onChange={(e) => updateSize(index, 'size', e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-1.5 focus:ring-1 focus:ring-nature-green outline-none text-sm"
+                                        />
+                                    </div>
+                                    <div className="w-32">
+                                        <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Price (₹)</label>
+                                        <input
+                                            type="number"
+                                            value={s.price}
+                                            onChange={(e) => updateSize(index, 'price', parseFloat(e.target.value))}
+                                            className="w-full border border-gray-300 rounded px-3 py-1.5 focus:ring-1 focus:ring-nature-green outline-none text-sm"
+                                        />
+                                    </div>
+                                    <button type="button" onClick={() => removeSize(index)} className="p-2 text-red-400 hover:text-red-600 transition-colors">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
@@ -255,12 +398,9 @@ export default function EditProductPage() {
                         className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-nature-green outline-none"
                     >
                         <option value="">Select Category</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Grains">Grains</option>
-                        <option value="Spices">Spices</option>
-                        <option value="Pickles">Pickles</option>
-                        <option value="Oils">Oils</option>
-                        <option value="Other">Other</option>
+                        {categories.map((cat: any) => (
+                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                        ))}
                     </select>
                 </div>
 

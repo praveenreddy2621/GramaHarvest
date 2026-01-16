@@ -2,7 +2,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { Menu, X, ShoppingCart, User } from "lucide-react";
+import { Menu, X, ShoppingCart, User, Bell } from "lucide-react";
+import NotificationDropdown from "./NotificationDropdown";
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
@@ -52,7 +53,7 @@ export default function Navbar() {
                             <div className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-colors ${isHome && !scrolled ? 'border-white/50' : 'border-nature-gold'}`}>
                                 <Image src="/images/logo.jpg" alt="Grama Harvest" fill className="object-cover" />
                             </div>
-                            <span className={`font-serif text-2xl font-bold tracking-wide transition-colors ${isHome && !scrolled && !isOpen ? 'text-white' : 'text-nature-green'}`}>
+                            <span className={`font-serif text-xl sm:text-2xl font-bold tracking-wide transition-colors ${isHome && !scrolled && !isOpen ? 'text-white' : 'text-nature-green'}`}>
                                 Grama Harvest
                             </span>
                         </Link>
@@ -74,6 +75,9 @@ export default function Navbar() {
                     </div>
 
                     <div className="hidden md:flex items-center gap-4">
+                        {isAuthenticated && (
+                            <NotificationDropdown textColorClass={textColorClass} />
+                        )}
                         <Link href={isAuthenticated ? "/profile" : "/login"} className={`relative group transition-colors ${textColorClass}`}>
                             <User size={24} />
                         </Link>
@@ -90,21 +94,24 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    <div className="md:hidden flex items-center gap-4">
-                        <Link href={isAuthenticated ? "/profile" : "/login"} className={`relative transition-colors ${iconColorClass}`}>
+                    <div className="md:hidden flex items-center gap-2 sm:gap-4">
+                        {isAuthenticated && (
+                            <NotificationDropdown textColorClass={iconColorClass} />
+                        )}
+                        <Link href={isAuthenticated ? "/profile" : "/login"} className={`relative transition-colors ${iconColorClass} p-1`}>
                             <User className="h-6 w-6" />
                         </Link>
-                        <Link href="/cart" className={`relative transition-colors ${iconColorClass}`}>
+                        <Link href="/cart" className={`relative transition-colors ${iconColorClass} p-1`}>
                             <ShoppingCart className="h-6 w-6" />
                             {cartCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-nature-green text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                                <span className="absolute -top-1 -right-1 bg-nature-green text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
                                     {cartCount}
                                 </span>
                             )}
                         </Link>
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className={`transition-colors ${iconColorClass}`}
+                            className={`transition-colors ${iconColorClass} p-1`}
                         >
                             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </button>

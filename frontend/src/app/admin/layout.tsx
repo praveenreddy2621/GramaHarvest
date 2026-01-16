@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, ShoppingBag, Package, LogOut, Tag, Clock } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Package, LogOut, Tag, Clock, FolderTree } from 'lucide-react';
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -46,6 +46,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-nature-cream rounded-lg transition-colors">
                         <Package size={20} />
                         Products
+                    </Link>
+                    <Link href="/admin/categories" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-nature-cream rounded-lg transition-colors">
+                        <FolderTree size={20} />
+                        Categories
                     </Link>
                     <Link href="/admin/coupons" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-nature-cream rounded-lg transition-colors">
                         <Tag size={20} />

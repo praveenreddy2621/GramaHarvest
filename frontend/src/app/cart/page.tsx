@@ -69,8 +69,8 @@ export default function CartPage() {
         <main className="min-h-screen bg-nature-cream">
             <Navbar />
 
-            <section className="pt-32 pb-24 container mx-auto px-4">
-                <h1 className="text-4xl font-serif font-bold text-nature-earth mb-8 text-center">Your Harvest Basket</h1>
+            <section className="pt-24 md:pt-32 pb-12 md:pb-24 container mx-auto px-4">
+                <h1 className="text-3xl md:text-4xl font-serif font-bold text-nature-earth mb-6 md:mb-8 text-center">Your Harvest Basket</h1>
 
                 {items.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-3xl shadow-sm">
@@ -87,10 +87,10 @@ export default function CartPage() {
                     <div className="grid lg:grid-cols-3 gap-12">
 
                         {/* Cart Items */}
-                        <div className="lg:col-span-2 space-y-6">
+                        <div className="lg:col-span-2 space-y-4 md:space-y-6">
                             {items.map((item) => (
-                                <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-zinc-100 flex gap-6 items-center">
-                                    <div className="w-24 h-24 relative bg-stone-100 rounded-xl overflow-hidden shrink-0">
+                                <div key={item.id} className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-zinc-100 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
+                                    <div className="w-full sm:w-24 h-48 sm:h-24 relative bg-stone-100 rounded-xl overflow-hidden shrink-0">
                                         <Image
                                             src={item.image || "/images/logo.jpg"}
                                             alt={item.name}
@@ -98,33 +98,46 @@ export default function CartPage() {
                                             className="object-cover"
                                         />
                                     </div>
-                                    <div className="flex-grow">
-                                        <h3 className="text-xl font-serif font-bold text-nature-earth">{item.name}</h3>
-                                        <p className="text-sm text-zinc-500 mb-2">{item.unit}</p>
-                                        <div className="text-lg font-bold text-nature-green">₹{item.price * item.quantity}</div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2 bg-stone-100 rounded-full p-1">
+                                    <div className="flex-grow w-full">
+                                        <div className="flex justify-between items-start mb-1 sm:mb-2">
+                                            <div>
+                                                <h3 className="text-lg md:text-xl font-serif font-bold text-nature-earth line-clamp-1">{item.name}</h3>
+                                                <p className="text-xs md:text-sm text-zinc-500">{item.unit}</p>
+                                            </div>
                                             <button
-                                                onClick={() => updateQuantity(item.id, -1)}
-                                                className="w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-nature-cream transition-colors"
+                                                onClick={() => removeFromCart(item.id)}
+                                                className="text-red-400 hover:text-red-600 transition-colors p-1 sm:hidden"
                                             >
-                                                <Minus size={16} />
-                                            </button>
-                                            <span className="w-8 text-center font-bold">{item.quantity}</span>
-                                            <button
-                                                onClick={() => updateQuantity(item.id, 1)}
-                                                className="w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-nature-cream transition-colors"
-                                            >
-                                                <Plus size={16} />
+                                                <Trash2 size={18} />
                                             </button>
                                         </div>
-                                        <button
-                                            onClick={() => removeFromCart(item.id)}
-                                            className="text-red-500 hover:text-red-700 transition-colors p-2"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
+                                        <div className="flex items-center justify-between sm:justify-start gap-4 mt-4 sm:mt-0">
+                                            <div className="text-lg font-bold text-nature-green">₹{item.price * item.quantity}</div>
+
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-2 bg-stone-100 rounded-full p-1">
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, -1)}
+                                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-nature-cream transition-colors shadow-sm"
+                                                    >
+                                                        <Minus size={14} />
+                                                    </button>
+                                                    <span className="w-6 text-center font-bold text-sm">{item.quantity}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, 1)}
+                                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-nature-cream transition-colors shadow-sm"
+                                                    >
+                                                        <Plus size={14} />
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    onClick={() => removeFromCart(item.id)}
+                                                    className="hidden sm:block text-red-500 hover:text-red-700 transition-colors p-2"
+                                                >
+                                                    <Trash2 size={20} />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ))}

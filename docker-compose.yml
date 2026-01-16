@@ -113,9 +113,9 @@ services:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
       NODE_ENV: production
-    # Expose port to host for external Nginx proxy
+    # Expose port to host for external proxy
     ports:
-      - "3001:3000"
+      - "3002:3000"
     networks:
       - gramaharvest-network
     depends_on:

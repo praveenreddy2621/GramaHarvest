@@ -1,9 +1,22 @@
-#!/bin/bash
+# Caddyfile snippet
+# Add this to your existing Caddyfile (usually /etc/caddy/Caddyfile)
 
-if ! [ -x "$(command -v docker-compose)" ]; then
-  echo 'Error: docker-compose is not installed.' >&2
-  exit 1
-fi
+gramaharvest.shop, www.gramaharvest.shop {
+    # Backend API
+    handle /api/* {
+        reverse_proxy localhost:5001
+    }
+
+    # Uploaded Images
+    handle /uploads/* {
+        reverse_proxy localhost:5001
+    }
+
+    # Frontend (Next.js)
+    handle {
+        reverse_proxy localhost:3002
+    }
+}
 
 domains=(gramaharvest.shop www.gramaharvest.shop)
 rsa_key_size=4096

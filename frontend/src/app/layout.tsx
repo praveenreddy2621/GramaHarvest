@@ -54,10 +54,10 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/images/branded-ghee-jar-final.jpg',
+        url: '/images/logo-new.png',
         width: 800,
         height: 600,
-        alt: 'Grama Harvest Premium Ghee',
+        alt: 'Grama Harvest Logo',
       },
     ],
   },
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Grama Harvest',
     description: 'Authentic Bilona Ghee and Organic Staples from our village to your home.',
-    images: ['/images/branded-ghee-jar-final.jpg'],
+    images: ['/images/logo-new.png'],
   },
   robots: {
     index: true,

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nature-green: #4A7C59;
+  --color-nature-earth: #8C6A4B;
+  --color-nature-gold: #F2C94C;
+  --color-nature-red: #C21807;
+  --color-nature-cream: #FAF3E0;
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+:root {
+  --background: var(--color-nature-cream);
+  --foreground: var(--color-nature-earth);
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  width: 100%;
+}
+
+html {
+  overflow-x: hidden;
+}

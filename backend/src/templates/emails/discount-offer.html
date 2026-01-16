@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Discount Just for You!</title>
+</head>
+
+<body
+    style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f0; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0"
+                    style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+                    <!-- Header with Celebration -->
+                    <tr>
+                        <td
+                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px 30px; text-align: center;">
+                            <div style="font-size: 60px; margin-bottom: 10px;">🎉</div>
+                            <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold;">Exclusive Offer
+                                Inside!</h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Limited Time
+                                Only</p>
+                        </td>
+                    </tr>
+
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">
+                                Hi <strong>{{userName}}</strong>,
+                            </p>
+                            <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">
+                                Great news! We're running a special promotion just for our valued customers like you.
+                            </p>
+                            <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 25px 0;">
+                                For a limited time, enjoy amazing discounts on our premium farm-fresh products,
+                                including our organic buffalo ghee!
+                            </p>
+
+                            <!-- Discount Offer Box -->
+                            <div
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 16px; padding: 40px; margin: 30px 0; text-align: center; position: relative;">
+                                <div
+                                    style="position: absolute; top: -15px; right: 20px; background-color: #fbbf24; color: #78350f; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 12px; transform: rotate(5deg);">
+                                    LIMITED TIME
+                                </div>
+                                <h2 style="color: #ffffff; margin: 0 0 20px 0; font-size: 36px; font-weight: bold;">
+                                    {{discountPercentage}}% OFF
+                                </h2>
+                                <p style="color: #ffffff; font-size: 18px; margin: 0 0 25px 0; opacity: 0.95;">
+                                    {{discountDescription}}
+                                </p>
+                                <div
+                                    style="background-color: rgba(255,255,255,0.25); border: 2px dashed rgba(255,255,255,0.5); border-radius: 8px; padding: 15px; margin: 20px auto; max-width: 300px;">
+                                    <p style="color: #ffffff; font-size: 14px; margin: 0 0 8px 0; opacity: 0.9;">Use
+                                        Coupon Code:</p>
+                                    <p
+                                        style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; letter-spacing: 2px;">
+                                        {{couponCode}}</p>
+                                </div>
+                                <p style="color: #ffffff; font-size: 14px; margin: 15px 0 0 0; opacity: 0.85;">
+                                    Valid until {{expiryDate}}
+                                </p>
+                            </div>
+
+                            <!-- Featured Products -->
+                            <div style="background-color: #f7fafc; border-radius: 12px; padding: 25px; margin: 25px 0;">
+                                <h3 style="color: #2d3748; margin: 0 0 20px 0; font-size: 20px; text-align: center;">
+                                    🌟 Recommended Products
+                                </h3>
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td style="padding: 10px; width: 50%;">
+                                            <div
+                                                style="background-color: #ffffff; border-radius: 8px; padding: 15px; text-align: center;">
+                                                <div style="font-size: 40px; margin-bottom: 10px;">🌾</div>
+                                                <p style="color: #2d3748; font-weight: bold; margin: 0 0 5px 0;">Organic
+                                                    Rice</p>
+                                                <p style="color: #01BF64; font-weight: bold; margin: 0;">₹{{price1}}</p>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 10px; width: 50%;">
+                                            <div
+                                                style="background-color: #ffffff; border-radius: 8px; padding: 15px; text-align: center;">
+                                                <div style="font-size: 40px; margin-bottom: 10px;">🥛</div>
+                                                <p style="color: #2d3748; font-weight: bold; margin: 0 0 5px 0;">Pure
+                                                    Ghee</p>
+                                                <p style="color: #01BF64; font-weight: bold; margin: 0;">₹{{price2}}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- Benefits -->
+                            <div style="border-left: 4px solid #01BF64; padding-left: 20px; margin: 25px 0;">
+                                <h4 style="color: #2d3748; margin: 0 0 10px 0; font-size: 16px;">Why Shop with Us:</h4>
+                                <ul
+                                    style="color: #4a5568; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                                    <li>Premium Organic Buffalo Ghee</li>
+                                    <li>Farm-Fresh Products from Local Farmers</li>
+                                    <li>Free Delivery on Orders Above ₹500</li>
+                                    <li>Easy Returns & Refunds</li>
+                                </ul>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 30px 0 20px 0;">
+                                        <a href="{{websiteUrl}}/harvest?coupon={{couponCode}}"
+                                            style="background-color: #f5576c; color: #ffffff; padding: 18px 50px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block; box-shadow: 0 4px 6px rgba(245, 87, 108, 0.3);">
+                                            Claim Your Discount Now! 🎁
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p
+                                style="color: #718096; font-size: 13px; line-height: 1.6; margin: 20px 0 0 0; text-align: center; font-style: italic;">
+                                ⏰ Hurry! This offer ends soon. Don't miss out on these amazing savings!
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #2d3748; padding: 30px; text-align: center;">
+                            <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 14px;">
+                                Happy Shopping! 🛒💚
+                            </p>
+                            <p style="color: #a0aec0; margin: 0; font-size: 12px;">
+                                © 2026 Grama Harvest. All rights reserved.<br>
+                                Farm Fresh. Naturally Pure.
+                            </p>
+                            <p style="color: #718096; margin: 15px 0 0 0; font-size: 11px;">
+                                <a href="{{unsubscribeUrl}}"
+                                    style="color: #a0aec0; text-decoration: underline;">Unsubscribe</a> from promotional
+                                emails
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

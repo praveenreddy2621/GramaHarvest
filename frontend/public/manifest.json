@@ -1,0 +1,17 @@
+{
+    "name": "Grama Harvest",
+    "short_name": "Grama Harvest",
+    "description": "Authentic Bilona Ghee and Organic Staples from our village to your home.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FDFBF7",
+    "theme_color": "#4A7C59",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "any",
+            "type": "image/png"
+        }
+    ]
+}

@@ -54,9 +54,9 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/images/logo-new.png',
-        width: 800,
-        height: 600,
+        url: 'https://gramaharvest.shop/images/logo-new.png?v=2',
+        width: 1200,
+        height: 630,
         alt: 'Grama Harvest Logo',
       },
     ],
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Grama Harvest',
     description: 'Authentic Bilona Ghee and Organic Staples from our village to your home.',
-    images: ['/images/logo-new.png'],
+    images: ['https://gramaharvest.shop/images/logo-new.png?v=2'],
   },
   robots: {
     index: true,

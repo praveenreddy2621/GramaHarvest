@@ -16,7 +16,7 @@ declare global {
 export default function CheckoutPage() {
     const router = useRouter();
     const { user, token, isAuthenticated } = useAuth();
-    const { items: cartItems, cartTotal, clearCart, coupon } = useCart();
+    const { items: cartItems, cartTotal, subTotal, clearCart, coupon } = useCart();
 
     const [paymentMethod, setPaymentMethod] = useState('online');
     const [loading, setLoading] = useState(false);
@@ -314,8 +314,16 @@ export default function CheckoutPage() {
                             <div className="border-t pt-4 space-y-2">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-bold">₹{cartTotal}</span>
+                                    <span className="font-bold">₹{subTotal}</span>
                                 </div>
+
+                                {coupon && (
+                                    <div className="flex justify-between text-sm text-green-600">
+                                        <span>Discount ({coupon.code})</span>
+                                        <span className="font-bold">- ₹{subTotal - cartTotal}</span>
+                                    </div>
+                                )}
+
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-600">Shipping</span>
                                     <span className="font-bold text-green-600">FREE</span>

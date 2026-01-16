@@ -21,8 +21,8 @@ type CartContextType = {
     cartCount: number;
     isCartOpen: boolean;
     toggleCart: () => void;
-    coupon: { code: string; discount: number; type: string } | null;
-    applyCoupon: (code: string, discount: number, type: string) => void;
+    coupon: { code: string; discount: number; type: string; description?: string } | null;
+    applyCoupon: (code: string, discount: number, type: string, description?: string) => void;
     removeCoupon: () => void;
 };
 
@@ -32,13 +32,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
-    const [coupon, setCoupon] = useState<{ code: string; discount: number; type: string } | null>(null);
+    const [coupon, setCoupon] = useState<{ code: string; discount: number; type: string; description?: string } | null>(null);
 
     useEffect(() => {
         setIsMounted(true);
-        const saved = localStorage.getItem("gramaharvest_cart");
-        if (saved) {
-            setItems(JSON.parse(saved));
+        const savedCart = localStorage.getItem("gramaharvest_cart");
+        if (savedCart) {
+            setItems(JSON.parse(savedCart));
+        }
+        const savedCoupon = localStorage.getItem("gramaharvest_coupon");
+        if (savedCoupon) {
+            setCoupon(JSON.parse(savedCoupon));
         }
     }, []);
 
@@ -47,6 +51,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem("gramaharvest_cart", JSON.stringify(items));
         }
     }, [items, isMounted]);
+
+    useEffect(() => {
+        if (isMounted) {
+            if (coupon) {
+                localStorage.setItem("gramaharvest_coupon", JSON.stringify(coupon));
+            } else {
+                localStorage.removeItem("gramaharvest_coupon");
+            }
+        }
+    }, [coupon, isMounted]);
 
     const addToCart = (product: Omit<CartItem, "quantity">) => {
         setItems((prev) => {
@@ -85,8 +99,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const toggleCart = () => setIsCartOpen((prev) => !prev);
 
-    const applyCoupon = (code: string, discount: number, type: string) => {
-        setCoupon({ code, discount, type });
+    const applyCoupon = (code: string, discount: number, type: string, description?: string) => {
+        setCoupon({ code, discount, type, description });
     };
 
     const removeCoupon = () => {

@@ -33,6 +33,18 @@ const addOrderItems = async (req, res) => {
                 const coupon = couponRes.rows[0];
                 couponId = coupon.id;
 
+                // Calculate subtotal to verify discount (Backend validation)
+                const subtotal = orderItems.reduce((acc, item) => acc + (parseFloat(item.price) * parseInt(item.quantity)), 0);
+
+                if (coupon.discount_type === 'percentage') {
+                    discountAmount = (subtotal * parseFloat(coupon.discount_value)) / 100;
+                    if (coupon.max_discount_amount && discountAmount > parseFloat(coupon.max_discount_amount)) {
+                        discountAmount = parseFloat(coupon.max_discount_amount);
+                    }
+                } else {
+                    discountAmount = parseFloat(coupon.discount_value);
+                }
+
                 // Mark as used
                 await client.query(
                     'UPDATE coupons SET used_count = used_count + 1 WHERE id = $1',

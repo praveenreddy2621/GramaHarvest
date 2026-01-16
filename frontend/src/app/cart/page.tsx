@@ -10,13 +10,28 @@ import Footer from '@/components/UI/Footer';
 import { BACKEND_API } from '@/config';
 
 export default function CartPage() {
-    const { items, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
+    const {
+        items,
+        updateQuantity,
+        removeFromCart,
+        cartTotal,
+        clearCart,
+        coupon,
+        applyCoupon,
+        removeCoupon,
+        subTotal
+    } = useCart();
     const { token } = useAuth();
     const [couponCode, setCouponCode] = useState('');
-    const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
     const [couponError, setCouponError] = useState('');
     const [loadingCoupon, setLoadingCoupon] = useState(false);
     const [publicCoupons, setPublicCoupons] = useState<any[]>([]);
+
+    React.useEffect(() => {
+        if (coupon) {
+            setCouponCode(coupon.code);
+        }
+    }, [coupon]);
 
     React.useEffect(() => {
         const fetchCoupons = async () => {
@@ -52,36 +67,36 @@ export default function CartPage() {
                 },
                 body: JSON.stringify({
                     code: code,
-                    orderAmount: cartTotal
+                    orderAmount: subTotal
                 })
             });
 
             const data = await res.json();
 
             if (res.ok && data.valid) {
-                setAppliedCoupon(data.coupon);
+                applyCoupon(data.coupon.code, data.coupon.discountValue, data.coupon.discountType, data.coupon.description);
                 setCouponCode(code);
                 setCouponError('');
             } else {
                 setCouponError(data.message || 'Invalid coupon code');
-                setAppliedCoupon(null);
+                removeCoupon();
             }
         } catch (err) {
             setCouponError('Error applying coupon');
-            setAppliedCoupon(null);
+            removeCoupon();
         } finally {
             setLoadingCoupon(false);
         }
     };
 
     const handleRemoveCoupon = () => {
-        setAppliedCoupon(null);
+        removeCoupon();
         setCouponCode('');
         setCouponError('');
     };
 
-    const finalTotal = appliedCoupon ? appliedCoupon.finalAmount : cartTotal;
-    const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+    const discount = coupon ? subTotal - cartTotal : 0;
+    const finalTotal = cartTotal;
 
     return (
         <main className="min-h-screen bg-nature-cream">
@@ -173,7 +188,7 @@ export default function CartPage() {
                                         <h3 className="font-bold text-gray-800">Have a Coupon?</h3>
                                     </div>
 
-                                    {!appliedCoupon ? (
+                                    {!coupon ? (
                                         <div className="space-y-4">
                                             <div className="flex gap-2">
                                                 <input
@@ -219,10 +234,10 @@ export default function CartPage() {
                                             <div className="flex items-center justify-between">
                                                 <div>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-bold text-green-700">{appliedCoupon.code}</span>
+                                                        <span className="font-bold text-green-700">{coupon.code}</span>
                                                         <span className="text-sm text-green-600">Applied!</span>
                                                     </div>
-                                                    <p className="text-xs text-gray-600 mt-1">{appliedCoupon.description}</p>
+                                                    <p className="text-xs text-gray-600 mt-1">{coupon.description || 'Coupon discount applied'}</p>
                                                 </div>
                                                 <button
                                                     onClick={handleRemoveCoupon}
@@ -242,9 +257,9 @@ export default function CartPage() {
                                         <span className="font-semibold">₹{cartTotal}</span>
                                     </div>
 
-                                    {appliedCoupon && (
+                                    {coupon && (
                                         <div className="flex justify-between text-green-600">
-                                            <span>Discount ({appliedCoupon.code})</span>
+                                            <span>Discount ({coupon.code})</span>
                                             <span className="font-semibold">- ₹{discount}</span>
                                         </div>
                                     )}
@@ -259,7 +274,7 @@ export default function CartPage() {
                                         <span>₹{finalTotal}</span>
                                     </div>
 
-                                    {appliedCoupon && (
+                                    {coupon && (
                                         <div className="text-sm text-green-600 text-center">
                                             You saved ₹{discount}! 🎉
                                         </div>

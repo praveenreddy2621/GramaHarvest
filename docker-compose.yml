@@ -58,6 +58,18 @@ services:
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
       REDIS_HOST: redis
       NODE_ENV: production
+      # Email Configuration
+      EMAIL_SERVICE: ${EMAIL_SERVICE}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL}
+      # Admin Credentials
+      ADMIN_NAME: ${ADMIN_NAME}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     volumes:
       - backend_uploads:/app/uploads
     # CHANGED: Only expose internally, not to host

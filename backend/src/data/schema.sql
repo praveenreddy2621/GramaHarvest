@@ -111,3 +111,17 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code VARCHAR(50);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_amount DECIMAL(10, 2) DEFAULT 0;
 
 ALTER TABLE coupons ADD COLUMN IF NOT EXISTS user_type VARCHAR(20) DEFAULT 'all';
+
+-- Create table to track user coupon usage
+CREATE TABLE IF NOT EXISTS user_coupon_usage (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    coupon_id INTEGER NOT NULL REFERENCES coupons(id) ON DELETE CASCADE,
+    used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    order_id INTEGER REFERENCES orders(id),
+    UNIQUE(user_id, coupon_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_coupon_usage ON user_coupon_usage(user_id, coupon_id);
+CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
+CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active);

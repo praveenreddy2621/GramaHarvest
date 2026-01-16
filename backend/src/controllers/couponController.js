@@ -5,9 +5,15 @@ const pool = require('../config/db');
 // @access  Private
 const validateCoupon = async (req, res) => {
     const { code, orderAmount } = req.body;
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    console.log(`Validating coupon: ${code} for order amount: ${orderAmount} (User: ${userId})`);
 
     try {
+        if (!code) {
+            return res.status(400).json({ message: 'Coupon code is required' });
+        }
+
         const result = await pool.query(
             `SELECT * FROM coupons 
              WHERE code = $1 
@@ -81,8 +87,8 @@ const validateCoupon = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error validating coupon' });
+        console.error('Coupon Validation Error:', error);
+        res.status(500).json({ message: 'Error validating coupon: ' + error.message });
     }
 };
 

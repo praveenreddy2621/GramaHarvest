@@ -84,7 +84,8 @@ CREATE TABLE IF NOT EXISTS coupons (
     valid_until TIMESTAMP,
     user_type VARCHAR(20) DEFAULT 'all', -- all, first_time
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS product_waitlist (
@@ -125,3 +126,6 @@ CREATE TABLE IF NOT EXISTS user_coupon_usage (
 CREATE INDEX IF NOT EXISTS idx_user_coupon_usage ON user_coupon_usage(user_id, coupon_id);
 CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
 CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active);
+
+-- Ensure updated_at exists for coupons
+ALTER TABLE coupons ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

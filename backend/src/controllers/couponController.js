@@ -63,15 +63,19 @@ const validateCoupon = async (req, res) => {
         }
 
         // Calculate discount
+        const numericOrderAmount = parseFloat(orderAmount) || 0;
+        const numericDiscountValue = parseFloat(coupon.discount_value) || 0;
         let discountAmount = 0;
+
         if (coupon.discount_type === 'percentage') {
-            discountAmount = (orderAmount * coupon.discount_value) / 100;
+            discountAmount = (numericOrderAmount * numericDiscountValue) / 100;
             // Apply max discount limit if exists
-            if (coupon.max_discount_amount && discountAmount > coupon.max_discount_amount) {
-                discountAmount = coupon.max_discount_amount;
+            const maxDiscount = parseFloat(coupon.max_discount_amount);
+            if (maxDiscount && discountAmount > maxDiscount) {
+                discountAmount = maxDiscount;
             }
         } else {
-            discountAmount = coupon.discount_value;
+            discountAmount = numericDiscountValue;
         }
 
         res.json({
@@ -81,9 +85,9 @@ const validateCoupon = async (req, res) => {
                 code: coupon.code,
                 description: coupon.description,
                 discountType: coupon.discount_type,
-                discountValue: coupon.discount_value,
-                discountAmount: parseFloat(discountAmount.toFixed(2)),
-                finalAmount: parseFloat((orderAmount - discountAmount).toFixed(2))
+                discountValue: numericDiscountValue,
+                discountAmount: parseFloat(Number(discountAmount).toFixed(2)),
+                finalAmount: parseFloat((numericOrderAmount - discountAmount).toFixed(2))
             }
         });
     } catch (error) {

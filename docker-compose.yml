@@ -72,9 +72,9 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     volumes:
       - backend_uploads:/app/uploads
-    # CHANGED: Only expose internally, not to host
-    expose:
-      - "5001"
+    # Expose port to host for external Nginx proxy
+    ports:
+      - "5001:5001"
     networks:
       - gramaharvest-network
     depends_on:
@@ -113,9 +113,9 @@ services:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
       NODE_ENV: production
-    # CHANGED: Only expose internally, not to host
-    expose:
-      - "3000"
+    # Expose port to host for external Nginx proxy
+    ports:
+      - "3001:3000"
     networks:
       - gramaharvest-network
     depends_on:

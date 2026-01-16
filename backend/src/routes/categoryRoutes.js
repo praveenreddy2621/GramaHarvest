@@ -7,7 +7,7 @@ const {
     updateCategory,
     deleteCategory
 } = require('../controllers/categoryController');
-const cache = require('../middleware/cacheMiddleware');
+const { cache } = require('../middleware/cacheMiddleware');
 
 router.get('/', cache(3600), getCategories);
 router.post('/', protect, admin, createCategory);

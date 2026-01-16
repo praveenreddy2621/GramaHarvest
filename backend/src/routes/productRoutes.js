@@ -11,7 +11,7 @@ const {
 } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
-const cache = require('../middleware/cacheMiddleware');
+const { cache } = require('../middleware/cacheMiddleware');
 
 // Image upload endpoint
 router.post('/upload', protect, admin, (req, res, next) => {

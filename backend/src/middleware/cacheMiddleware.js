@@ -27,4 +27,16 @@ const cache = (duration) => {
     };
 };
 
-module.exports = cache;
+const clearCache = async (pattern) => {
+    try {
+        const keys = await redis.keys(`cache:${pattern}*`);
+        if (keys.length > 0) {
+            await redis.del(keys);
+            console.log(`Cleared cache for pattern: ${pattern}`);
+        }
+    } catch (error) {
+        console.error('Clear Cache error:', error);
+    }
+};
+
+module.exports = { cache, clearCache };

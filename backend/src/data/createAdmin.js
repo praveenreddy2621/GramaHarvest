@@ -1,10 +1,17 @@
 const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
 const createAdmin = async () => {
-    const name = 'Admin User';
-    const email = 'admin@gramaharvest.com';
-    const password = 'adminpassword123';
+    const name = process.env.ADMIN_NAME || 'Admin User';
+    const email = process.env.ADMIN_EMAIL || 'admin@gramaharvest.shop';
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!password) {
+        console.error('❌ Error: ADMIN_PASSWORD not set in .env file');
+        console.log('Please add ADMIN_PASSWORD=your_password to your .env file');
+        process.exit(1);
+    }
 
     try {
         console.log('Creating admin user...');
@@ -25,9 +32,9 @@ const createAdmin = async () => {
             [name, email, hashedPassword]
         );
 
-        console.log(`Admin user created successfully.`);
+        console.log(`✅ Admin user created successfully.`);
         console.log(`Email: ${email}`);
-        console.log(`Password: ${password}`);
+        console.log(`Password: [HIDDEN - Check your .env file]`);
         process.exit(0);
 
     } catch (err) {

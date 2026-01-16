@@ -11,6 +11,7 @@ const {
 } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
+const cache = require('../middleware/cacheMiddleware');
 
 // Image upload endpoint
 router.post('/upload', protect, admin, upload.single('image'), (req, res) => {
@@ -28,15 +29,28 @@ router.post('/upload', protect, admin, upload.single('image'), (req, res) => {
     }
 });
 
+router.post('/upload-multiple', protect, admin, upload.array('images', 5), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: 'No files uploaded' });
+        }
+        const imageUrls = req.files.map(file => `/uploads/products/${file.filename}`);
+        res.json({ imageUrls });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error uploading images' });
+    }
+});
+
 router.get('/waitlist/all', protect, admin, getWaitlist);
 router.post('/:id/notify', subscribeToWaitlist);
 
 router.route('/')
-    .get(getProducts)
+    .get(cache(300), getProducts)
     .post(protect, admin, createProduct);
 
 router.route('/:id')
-    .get(getProductById)
+    .get(cache(300), getProductById)
     .put(protect, admin, updateProduct)
     .delete(protect, admin, deleteProduct);
 

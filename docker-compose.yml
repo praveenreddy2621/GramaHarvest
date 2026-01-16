@@ -56,6 +56,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+      REDIS_HOST: redis
       NODE_ENV: production
     volumes:
       - backend_uploads:/app/uploads
@@ -66,6 +67,8 @@ services:
       - gramaharvest-network
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5001/health"]
@@ -90,6 +93,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     container_name: gramaharvest-frontend
     restart: unless-stopped
     environment:
@@ -136,6 +141,7 @@ services:
       - backend_uploads:/var/www/uploads:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - certbot_webroot:/var/www/certbot:ro
+      - nginx_cache:/var/cache/nginx
     networks:
       - gramaharvest-network
     depends_on:
@@ -158,12 +164,41 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # Redis for Caching & Rate Limiting
+  redis:
+    image: redis:7-alpine
+    container_name: gramaharvest-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    networks:
+      - gramaharvest-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   postgres_data:
     driver: local
   backend_uploads:
     driver: local
   certbot_webroot:
+    driver: local
+  redis_data:
+    driver: local
+  nginx_cache:
     driver: local
 
 networks:

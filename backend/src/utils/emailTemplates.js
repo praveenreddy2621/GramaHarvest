@@ -74,7 +74,7 @@ class EmailTemplates {
     /**
      * Get welcome email HTML
      */
-    async getWelcomeEmail(userName, websiteUrl = 'http://localhost:3000') {
+    async getWelcomeEmail(userName, websiteUrl = process.env.FRONTEND_URL || 'https://gramaharvest.shop') {
         return this.render('welcome', {
             userName,
             websiteUrl
@@ -93,14 +93,14 @@ class EmailTemplates {
             items: orderData.items,
             totalAmount: orderData.totalAmount,
             shippingAddress: orderData.shippingAddress,
-            websiteUrl: orderData.websiteUrl || 'http://localhost:3000'
+            websiteUrl: orderData.websiteUrl || process.env.FRONTEND_URL || 'https://gramaharvest.shop'
         });
     }
 
     /**
      * Get inactive user re-engagement email HTML
      */
-    async getInactiveUserEmail(userName, websiteUrl = 'http://localhost:3000', unsubscribeUrl = '') {
+    async getInactiveUserEmail(userName, websiteUrl = process.env.FRONTEND_URL || 'https://gramaharvest.shop', unsubscribeUrl = '') {
         return this.render('inactive-user', {
             userName,
             websiteUrl,
@@ -120,7 +120,7 @@ class EmailTemplates {
             expiryDate: discountData.expiryDate,
             price1: discountData.price1 || '1200',
             price2: discountData.price2 || '800',
-            websiteUrl: discountData.websiteUrl || 'http://localhost:3000',
+            websiteUrl: discountData.websiteUrl || process.env.FRONTEND_URL || 'https://gramaharvest.shop',
             unsubscribeUrl: discountData.unsubscribeUrl || ''
         });
     }
@@ -134,6 +134,14 @@ class EmailTemplates {
 
     async getShipmentNotificationEmail(data) {
         return this.render('shipment-notification', data);
+    }
+
+    async getPasswordResetEmail(userName, resetUrl, websiteUrl = process.env.FRONTEND_URL || 'https://gramaharvest.shop') {
+        return this.render('password-reset', {
+            userName,
+            resetUrl,
+            websiteUrl
+        });
     }
 }
 

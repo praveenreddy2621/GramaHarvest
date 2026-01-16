@@ -1,7 +1,15 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
+    console.log(`Attempting to send email to: ${options.email}`);
     try {
+        console.log('Email Config:', {
+            host: process.env.EMAIL_HOST,
+            port: process.env.EMAIL_PORT,
+            user: process.env.EMAIL_USER,
+            from: process.env.EMAIL_FROM_ADDRESS
+        });
+
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
             port: process.env.EMAIL_PORT,
@@ -23,7 +31,7 @@ const sendEmail = async (options) => {
         console.log(`Email sent: ${info.messageId}`);
     } catch (error) {
         console.error('Error sending email:', error);
-        // We don't throw here to prevent crashing the main request flow, but logged it.
+        throw error;
     }
 };
 

@@ -1,42 +1,54 @@
-const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
+const pool = require('../config/db');
+require('dotenv').config();
 
-const addSpecificAdmin = async () => {
-    const name = 'Praveen Reddy';
-    const email = 'praveenreddy@gramaharvest.shop';
-    const password = 'gramaharvest_admin'; // Default password
-
-    try {
-        console.log(`Processing admin user for ${email}...`);
-
-        // Check availability
-        const checkRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-
-        if (checkRes.rows.length > 0) {
-            // User exists, upgrade to admin
-            console.log('User exists. Updating role to Admin...');
-            await pool.query("UPDATE users SET role = 'admin' WHERE email = $1", [email]);
-            console.log('User updated to Admin successfully.');
-        } else {
-            // Create New
-            console.log('User does not exist. Creating new Admin user...');
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-
-            await pool.query(
-                `INSERT INTO users (name, email, password, role, created_at) 
-                 VALUES ($1, $2, $3, 'admin', NOW())`,
-                [name, email, hashedPassword]
-            );
-            console.log('Admin user created successfully.');
-            console.log(`Password: ${password}`);
-        }
-
-        process.exit(0);
-    } catch (err) {
-        console.error('Error adding admin:', err);
-        process.exit(1);
-    }
+const adminUser = {
+    name: 'Praveen Reddy',
+    email: 'praveenreddy@gramaharvest.shop',
+    password: process.env.ADMIN_PASSWORD || 'ChangeMe123!',
+    role: 'admin'
 };
 
-addSpecificAdmin();
+async function createOrUpdateAdmin() {
+    try {
+        console.log('Creating/Updating admin user...');
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(adminUser.password, salt);
+
+        // Check if user exists
+        const existingUser = await pool.query(
+            'SELECT * FROM users WHERE email = $1',
+            [adminUser.email]
+        );
+
+        if (existingUser.rows.length > 0) {
+            // Update existing user
+            await pool.query(
+                'UPDATE users SET name = $1, password = $2, role = $3 WHERE email = $4',
+                [adminUser.name, hashedPassword, adminUser.role, adminUser.email]
+            );
+            console.log('✅ Admin user updated successfully!');
+        } else {
+            // Create new user
+            await pool.query(
+                'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)',
+                [adminUser.name, adminUser.email, hashedPassword, adminUser.role]
+            );
+            console.log('✅ Admin user created successfully!');
+        }
+
+        console.log('\nAdmin Credentials:');
+        console.log('Email:', adminUser.email);
+        console.log('Password: [HIDDEN - Check your .env file]');
+        console.log('Role:', adminUser.role);
+
+        process.exit(0);
+    } catch (error) {
+        console.error('Error creating/updating admin:', error);
+        process.exit(1);
+    }
+}
+
+createOrUpdateAdmin();

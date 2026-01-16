@@ -1,6 +1,7 @@
 const pool = require('../config/db');
 const sendEmail = require('../utils/sendEmail');
 const emailTemplates = require('../utils/emailTemplates');
+const { createNotification } = require('./notificationController');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -129,8 +130,16 @@ const addOrderItems = async (req, res) => {
                     <a href="https://gramaharvest.shop/admin/orders" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none;">View Admin Panel</a>
                 `
             });
+
+            // Notify User (In-app)
+            await createNotification(userId, {
+                title: 'Order Placed! 🛍️',
+                message: `Your order #${order.id} has been placed successfully. Thank you for shopping with Gramaharvest!`,
+                type: 'order',
+                link: `/profile/orders`
+            });
         } catch (e) {
-            console.error('Email send failed', e);
+            console.error('Email/Notification failed', e);
         }
 
         res.status(201).json(order);
@@ -201,7 +210,22 @@ const updateOrderStatus = async (req, res) => {
             return res.status(404).json({ message: 'Order not found' });
         }
 
-        res.json(updatedOrder.rows[0]);
+        const order = updatedOrder.rows[0];
+
+        // Notify User of status change
+        let emoji = '📦';
+        if (status === 'shipped') emoji = '🚚';
+        if (status === 'delivered') emoji = '✅';
+        if (status === 'cancelled') emoji = '❌';
+
+        await createNotification(order.user_id, {
+            title: `Order Update ${emoji}`,
+            message: `Your order #${order.id} is now ${status}.`,
+            type: 'order',
+            link: `/profile/orders`
+        });
+
+        res.json(order);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error updating order' });
@@ -233,7 +257,17 @@ const updateOrderTracking = async (req, res) => {
             return res.status(404).json({ message: 'Order not found' });
         }
 
-        res.json(updatedOrder.rows[0]);
+        const order = updatedOrder.rows[0];
+
+        // Notify User of shipping
+        await createNotification(order.user_id, {
+            title: 'Order Shipped! 🚚',
+            message: `Your order #${order.id} has been shipped via ${courierService}. Tracking ID: ${trackingNumber}`,
+            type: 'order',
+            link: `/profile/orders`
+        });
+
+        res.json(order);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error updating tracking info' });

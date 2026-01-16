@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'customer',
+    reset_password_token VARCHAR(255),
+    reset_password_expires TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -21,12 +23,22 @@ CREATE TABLE IF NOT EXISTS addresses (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
     image_url TEXT,
+    gallery_urls TEXT[] DEFAULT '{}',
+    sizes JSONB DEFAULT '[]',
     stock INTEGER DEFAULT 0,
     category VARCHAR(100),
     is_preorder BOOLEAN DEFAULT FALSE,
@@ -86,6 +98,8 @@ CREATE TABLE IF NOT EXISTS product_waitlist (
 
 -- Migrations (Safe to run multiple times)
 ALTER TABLE products ADD COLUMN IF NOT EXISTS is_preorder BOOLEAN DEFAULT FALSE;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS gallery_urls TEXT[] DEFAULT '{}';
+ALTER TABLE products ADD COLUMN IF NOT EXISTS sizes JSONB DEFAULT '[]';
 
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS tracking_number VARCHAR(100);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS courier_service VARCHAR(100);

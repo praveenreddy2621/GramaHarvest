@@ -1,6 +1,7 @@
 const pool = require('../config/db');
 const sendEmail = require('../utils/sendEmail');
 const emailTemplates = require('../utils/emailTemplates');
+const { createNotification } = require('./notificationController');
 
 // ... 
 
@@ -8,7 +9,7 @@ const emailTemplates = require('../utils/emailTemplates');
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
-    const { name, description, price, imageUrl, category, stock, isPreorder } = req.body;
+    const { name, description, price, imageUrl, galleryUrls, sizes, category, stock, isPreorder } = req.body;
     const { id } = req.params;
 
     try {
@@ -20,23 +21,24 @@ const updateProduct = async (req, res) => {
         // Update
         const result = await pool.query(
             `UPDATE products 
-             SET name = $1, description = $2, price = $3, image_url = $4, category = $5, stock = $6, is_preorder = $7
-             WHERE id = $8 RETURNING *`,
-            [name, description, price, imageUrl, category, stock, isPreorder, id]
+             SET name = $1, description = $2, price = $3, image_url = $4, gallery_urls = $5, sizes = $6, category = $7, stock = $8, is_preorder = $9
+             WHERE id = $10 RETURNING *`,
+            [name, description, price, imageUrl, galleryUrls || [], JSON.stringify(sizes || []), category, stock, isPreorder, id]
         );
 
         const updatedProduct = result.rows[0];
 
         // Notify Waitlist if status changed from Preorder (true) to Available (false)
-        if (wasPreorder && isPreorder === false) {
-            const waitlist = await pool.query('SELECT email FROM product_waitlist WHERE product_id = $1', [id]);
+        if (wasPreorder && !isPreorder) {
+            const waitlist = await pool.query('SELECT email, user_id FROM product_waitlist WHERE product_id = $1', [id]);
 
             if (waitlist.rows.length > 0) {
                 console.log(`Notifying ${waitlist.rows.length} users for ${updatedProduct.name}`);
 
-                // Send emails in background
+                // Notify in background
                 waitlist.rows.forEach(async (row) => {
                     try {
+                        // 1. Send Email
                         await sendEmail({
                             email: row.email,
                             subject: `${updatedProduct.name} is Now Available!`,
@@ -49,8 +51,18 @@ const updateProduct = async (req, res) => {
                                 </div>
                             `
                         });
+
+                        // 2. Send In-App Notification if user is logged in
+                        if (row.user_id) {
+                            await createNotification(row.user_id, {
+                                title: 'Back in Stock! ✨',
+                                message: `${updatedProduct.name} is now available. Get yours before it's gone!`,
+                                type: 'promo',
+                                link: `/harvest`
+                            });
+                        }
                     } catch (e) {
-                        console.error('Waitlist email error:', e);
+                        console.error('Waitlist notify error:', e);
                     }
                 });
 
@@ -97,13 +109,13 @@ const getProductById = async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = async (req, res) => {
-    const { name, description, price, imageUrl, category, stock, isPreorder } = req.body;
+    const { name, description, price, imageUrl, galleryUrls, sizes, category, stock, isPreorder } = req.body;
 
     try {
         const result = await pool.query(
-            `INSERT INTO products (name, description, price, image_url, category, stock, is_preorder)
-             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [name, description, price, imageUrl, category, stock || 0, isPreorder || false]
+            `INSERT INTO products (name, description, price, image_url, gallery_urls, sizes, category, stock, is_preorder)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [name, description, price, imageUrl, galleryUrls || [], JSON.stringify(sizes || []), category, stock || 0, isPreorder || false]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {

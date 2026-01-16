@@ -84,6 +84,9 @@ export const metadata: Metadata = {
     apple: '/favicon.png',
   },
   manifest: '/manifest.json',
+  verification: {
+    google: 'Uu2MLruIWSSErsTvm0Yn0TBzubBPANEDi8jqcdxRlbs',
+  },
 };
 
 export const viewport: Viewport = {

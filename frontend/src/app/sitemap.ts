@@ -1,30 +1,62 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    return [
+    const baseUrl = 'https://gramaharvest.shop'
+    const lastModified = new Date()
+
+    const routes = [
         {
-            url: 'https://gramaharvest.shop',
-            lastModified: new Date(),
-            changeFrequency: 'yearly',
+            url: '',
+            lastModified,
+            changeFrequency: 'daily' as const,
             priority: 1,
         },
         {
-            url: 'https://gramaharvest.shop/harvest',
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
+            url: '/harvest',
+            lastModified,
+            changeFrequency: 'weekly' as const,
             priority: 0.8,
         },
         {
-            url: 'https://gramaharvest.shop/our-story',
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
+            url: '/our-story',
+            lastModified,
+            changeFrequency: 'monthly' as const,
+            priority: 0.6,
+        },
+        {
+            url: '/contact',
+            lastModified,
+            changeFrequency: 'monthly' as const,
             priority: 0.5,
         },
         {
-            url: 'https://gramaharvest.shop/contact',
-            lastModified: new Date(),
-            changeFrequency: 'yearly',
-            priority: 0.5,
+            url: '/privacy-policy',
+            lastModified,
+            changeFrequency: 'yearly' as const,
+            priority: 0.3,
+        },
+        {
+            url: '/refund-policy',
+            lastModified,
+            changeFrequency: 'yearly' as const,
+            priority: 0.3,
+        },
+        {
+            url: '/shipping-policy',
+            lastModified,
+            changeFrequency: 'yearly' as const,
+            priority: 0.3,
+        },
+        {
+            url: '/terms',
+            lastModified,
+            changeFrequency: 'yearly' as const,
+            priority: 0.3,
         },
     ]
+
+    return routes.map((route) => ({
+        ...route,
+        url: `${baseUrl}${route.url}`,
+    }))
 }

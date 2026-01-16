@@ -19,6 +19,14 @@ const { RedisStore } = require('rate-limit-redis');
 
 
 const app = express();
+const fs = require('fs');
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, '../uploads/products');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+    console.log('Created uploads directory:', uploadDir);
+}
 
 // Trust Nginx Proxy (Required for Rate Limiting & Correct Client IP)
 app.set('trust proxy', 1);
@@ -72,8 +80,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.json({ limit: '10kb' })); // Body limit
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.json({ limit: '50mb' })); // Increase body limit for large product data
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 
 // Prevent HTTP Param Pollution
